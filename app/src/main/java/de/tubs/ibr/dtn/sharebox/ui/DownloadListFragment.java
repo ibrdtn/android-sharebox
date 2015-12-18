@@ -125,8 +125,9 @@ public class DownloadListFragment extends ListFragment implements LoaderManager.
 
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    String title = getResources().getQuantityString(R.plurals.listitem_multi_title, 1, 1);
-                    mode.setTitle(title);
+                    String title = getResources().getQuantityString(R.plurals.listitem_multi_subtitle, 1, 1);
+                    mode.setTitle(R.string.listitem_multi_title);
+                    mode.setSubtitle(title);
                     return true;
                 }
 
@@ -144,8 +145,8 @@ public class DownloadListFragment extends ListFragment implements LoaderManager.
                 @Override
                 public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                     int selectCount = getListView().getCheckedItemCount();
-                    String title = getResources().getQuantityString(R.plurals.listitem_multi_title, selectCount, selectCount);
-                    mode.setTitle(title);
+                    String title = getResources().getQuantityString(R.plurals.listitem_multi_subtitle, selectCount, selectCount);
+                    mode.setSubtitle(title);
                 }
             };
             
