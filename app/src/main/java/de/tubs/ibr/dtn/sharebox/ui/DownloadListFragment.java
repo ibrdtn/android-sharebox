@@ -125,6 +125,9 @@ public class DownloadListFragment extends ListFragment implements LoaderManager.
 
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    MenuInflater inflater = getActivity().getMenuInflater();
+                    inflater.inflate(R.menu.item_menu, menu);
+
                     String title = getResources().getQuantityString(R.plurals.listitem_multi_subtitle, 1, 1);
                     mode.setTitle(R.string.listitem_multi_title);
                     mode.setSubtitle(title);
@@ -137,8 +140,6 @@ public class DownloadListFragment extends ListFragment implements LoaderManager.
 
                 @Override
                 public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    MenuInflater inflater = getActivity().getMenuInflater();
-                    inflater.inflate(R.menu.item_menu, menu);
                     return true;
                 }
 
