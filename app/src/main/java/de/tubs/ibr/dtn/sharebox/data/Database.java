@@ -283,12 +283,8 @@ public class Database {
                 // delete the file
                 f.delete();
 
-                // get content Uri for the deleted file
-                Uri contentUri = MediaStore.Audio.Media.getContentUriForPath( f.getAbsolutePath() );
-
                 // removed file from media library
-                mContext.getContentResolver().delete(contentUri,
-                        MediaStore.MediaColumns.DATA + " = ?", new String[]{f.getAbsolutePath()});
+                removeFromMediaStore(f);
             }
             
             cur.close();
@@ -310,12 +306,8 @@ public class Database {
     	// delete from storage
     	f.delete();
 
-        // get content Uri for the deleted file
-        Uri contentUri = MediaStore.Audio.Media.getContentUriForPath( f.getAbsolutePath() );
-    	
         // removed file from media library
-        mContext.getContentResolver().delete(contentUri,
-                MediaStore.MediaColumns.DATA + " = ?", new String[]{f.getAbsolutePath()});
+        removeFromMediaStore(f);
     	
     	notifyDataChanged();
     }
@@ -328,7 +320,7 @@ public class Database {
     
     public void remove(Long downloadId) {
         List<PackageFile> files = getFiles(downloadId);
-        
+
         // delete the files
         for (PackageFile pf : files) {
             File f = pf.getFile();
@@ -336,12 +328,8 @@ public class Database {
             // delete from storage
             f.delete();
 
-            // get content Uri for the deleted file
-            Uri contentUri = MediaStore.Audio.Media.getContentUriForPath(f.getAbsolutePath());
-
             // removed file from media library
-            mContext.getContentResolver().delete(contentUri,
-                    MediaStore.MediaColumns.DATA + " = ?", new String[]{f.getAbsolutePath()});
+            removeFromMediaStore(f);
         }
 
         // delete all files from database
@@ -351,5 +339,20 @@ public class Database {
         mDatabase.delete(Database.TABLE_NAMES[0], Download.ID + " = ?", new String[] { downloadId.toString() });
 
         notifyDataChanged();
+    }
+
+    private void removeFromMediaStore(File f) {
+        // get content Uri for the deleted file
+        Uri[] uris = {
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        };
+
+        for (Uri uri : uris) {
+            // removed file from media library
+            mContext.getContentResolver().delete(uri,
+                    MediaStore.MediaColumns.DATA + " = ?", new String[]{f.getAbsolutePath()});
+        }
     }
 }
