@@ -15,6 +15,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 import android.util.Log;
 import de.tubs.ibr.dtn.api.BundleID;
 import de.tubs.ibr.dtn.sharebox.ui.DownloadAdapter;
@@ -277,13 +278,17 @@ public class Database {
             
             while (cur.moveToNext())
             {
-                File file = new File(cur.getString(new PackageFileAdapter.ColumnsMap().mColumnFilename));
+                File f = new File(cur.getString(new PackageFileAdapter.ColumnsMap().mColumnFilename));
                 
                 // delete the file
-                file.delete();
-                
-                // announce removed file from the media library
-                mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file.getParentFile())));
+                f.delete();
+
+                // get content Uri for the deleted file
+                Uri contentUri = MediaStore.Audio.Media.getContentUriForPath( f.getAbsolutePath() );
+
+                // removed file from media library
+                mContext.getContentResolver().delete(contentUri,
+                        MediaStore.MediaColumns.DATA + " = ?", new String[]{f.getAbsolutePath()});
             }
             
             cur.close();
@@ -300,13 +305,17 @@ public class Database {
     	File f = pf.getFile();
 
     	// delete from database
-    	mDatabase.delete(Database.TABLE_NAMES[1], PackageFile.ID + " = ?", new String[] { pf.getId().toString() });
+    	mDatabase.delete(Database.TABLE_NAMES[1], PackageFile.ID + " = ?", new String[]{pf.getId().toString()});
     	
     	// delete from storage
     	f.delete();
+
+        // get content Uri for the deleted file
+        Uri contentUri = MediaStore.Audio.Media.getContentUriForPath( f.getAbsolutePath() );
     	
-        // announce removed file from the media library
-        mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(f.getParentFile())));
+        // removed file from media library
+        mContext.getContentResolver().delete(contentUri,
+                MediaStore.MediaColumns.DATA + " = ?", new String[]{f.getAbsolutePath()});
     	
     	notifyDataChanged();
     }
@@ -323,12 +332,22 @@ public class Database {
         // delete the files
         for (PackageFile pf : files) {
             File f = pf.getFile();
+
+            // delete from storage
             f.delete();
-            
-            // announce removed file from the media library
-            mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(f.getParentFile())));
+
+            // get content Uri for the deleted file
+            Uri contentUri = MediaStore.Audio.Media.getContentUriForPath(f.getAbsolutePath());
+
+            // removed file from media library
+            mContext.getContentResolver().delete(contentUri,
+                    MediaStore.MediaColumns.DATA + " = ?", new String[]{f.getAbsolutePath()});
         }
-        
+
+        // delete all files from database
+        mDatabase.delete(Database.TABLE_NAMES[1], PackageFile.DOWNLOAD + " = ?", new String[] { downloadId.toString() });
+
+        // delete the download from database
         mDatabase.delete(Database.TABLE_NAMES[0], Download.ID + " = ?", new String[] { downloadId.toString() });
 
         notifyDataChanged();
