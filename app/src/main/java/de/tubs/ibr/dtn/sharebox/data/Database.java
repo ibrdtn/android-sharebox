@@ -329,6 +329,11 @@ public class Database {
             mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(f.getParentFile())));
         }
         
+
+        // delete all files from database
+        mDatabase.delete(Database.TABLE_NAMES[1], PackageFile.DOWNLOAD + " = ?", new String[] { downloadId.toString() });
+
+        // delete the download from database
         mDatabase.delete(Database.TABLE_NAMES[0], Download.ID + " = ?", new String[] { downloadId.toString() });
 
         notifyDataChanged();
