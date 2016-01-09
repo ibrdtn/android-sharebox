@@ -6,17 +6,19 @@
     <string name="notification_ongoing_download_title">Transmission #%1$d</string>
     <string name="notification_ongoing_download_text">Receiving %1$s</string>
     <string name="notification_completed_download_text">Download complete (%1$s)</string>
-    <string name="notification_aborted_download_text">Download aborted</string>
+    <string name="notification_aborted_download_title">Transmission failed</string>
+    <string name="notification_aborted_download_text">Data is corrupted or expired</string>
     
-    <string name="notification_ongoing_upload_title">Transmission Upload</string>
+    <string name="notification_ongoing_upload_title">Transmission</string>
     <plurals name="notification_ongoing_upload_text">
         <item quantity="one">Wrap up %d file</item>
         <item quantity="other">Wrap up %d files</item>
     </plurals>
     
     <string name="notification_ongoing_upload_progress_text">%1$d / %2$d: %3$s</string>
-    <string name="notification_completed_upload_text">Upload complete (%1$s)</string>
-    <string name="notification_aborted_upload_text">Upload aborted</string>
+    <string name="notification_completed_upload_text">Preparation complete (%1$s)</string>
+    <string name="notification_aborted_upload_title">Transmission failed</string>
+    <string name="notification_aborted_upload_text">Unsupported media or missing file-permissions</string>
 
     <plurals name="notification_pending_download_title">
         <item quantity="one">Transmission #%2$d (%3$s)</item>

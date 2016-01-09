@@ -105,8 +105,10 @@ public class PackageFileListFragment extends ListFragment implements LoaderManag
                                     PackageFileItem pfi = (PackageFileItem)view;
                                     PackageFile pf = pfi.getObject();
 
-                                    Database db = mService.getDatabase();
-                                    db.remove(pf);
+                                    Intent deleteIntent = new Intent(getActivity(), DtnService.class);
+                                    deleteIntent.setAction(DtnService.DELETE_FILE_INTENT);
+                                    deleteIntent.putExtra(DtnService.EXTRA_KEY_FILE_ID, pf.getId());
+                                    getActivity().startService(deleteIntent);
                                 }
                             }
                         }

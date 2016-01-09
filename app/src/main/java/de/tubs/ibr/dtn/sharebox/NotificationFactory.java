@@ -109,6 +109,7 @@ public class NotificationFactory {
 
     public void showDownloadAborted(Download d) {
         // update notification
+        mDownloadBuilder.setContentTitle(mContext.getString(R.string.notification_aborted_download_title));
         mDownloadBuilder.setContentText(String.format(mContext.getString(R.string.notification_aborted_download_text), d.getBundleId().getSource()));
         mDownloadBuilder.setProgress(0, 0, false);
         mDownloadBuilder.setOngoing(false);
@@ -126,7 +127,6 @@ public class NotificationFactory {
     
     public void cancelDownload(BundleID bundleid) {
         mManager.cancel(bundleid.toString(), ONGOING_DOWNLOAD);
-        mDownloadBuilder = null;
     }
     
     /**
@@ -196,6 +196,7 @@ public class NotificationFactory {
 
     public void showUploadAborted(EID destination) {
         // update notification
+        mUploadBuilder.setContentTitle(mContext.getString(R.string.notification_aborted_upload_title));
         mUploadBuilder.setContentText(String.format(mContext.getString(R.string.notification_aborted_upload_text), destination.toString()));
         mUploadBuilder.setProgress(0, 0, false);
         mUploadBuilder.setOngoing(false);
