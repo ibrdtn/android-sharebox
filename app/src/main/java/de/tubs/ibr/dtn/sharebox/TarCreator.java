@@ -56,7 +56,8 @@ public class TarCreator implements Runnable {
 					currentFile++;
 					
 					// type not supported - skip the file
-					if (!ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) continue;
+					if (!ContentResolver.SCHEME_CONTENT.equals(uri.getScheme()))
+						throw new IllegalArgumentException("Content scheme " + uri.getScheme() + " not supported");
 					
 					ContentResolver resolver = mContext.getContentResolver();
 					
