@@ -107,11 +107,21 @@ public class DownloadListFragment extends ListFragment implements LoaderManager.
                                     // delete all selected items
                                     DownloadItem di = (DownloadItem)view;
                                     Download d = di.getObject();
-                
-                                    Intent rejectIntent = new Intent(getActivity(), DtnService.class);
-                                    rejectIntent.setAction(DtnService.REJECT_DOWNLOAD_INTENT);
-                                    rejectIntent.putExtra(DtnService.EXTRA_KEY_BUNDLE_ID, d.getBundleId());
-                                    getActivity().startService(rejectIntent);
+
+                                    if (d.isPending()) {
+                                        // reject download if the transmission if pending
+                                        Intent rejectIntent = new Intent(getActivity(), DtnService.class);
+                                        rejectIntent.setAction(DtnService.REJECT_DOWNLOAD_INTENT);
+                                        rejectIntent.putExtra(DtnService.EXTRA_KEY_BUNDLE_ID, d.getBundleId());
+                                        getActivity().startService(rejectIntent);
+                                    } else {
+                                        // otherwise simply delete it
+                                        Intent deleteIntent = new Intent(getActivity(), DtnService.class);
+                                        deleteIntent.setAction(DtnService.DELETE_DOWNLOAD_INTENT);
+                                        deleteIntent.putExtra(DtnService.EXTRA_KEY_DOWNLOAD_ID, d.getId());
+                                        deleteIntent.putExtra(DtnService.EXTRA_KEY_BUNDLE_ID, d.getBundleId());
+                                        getActivity().startService(deleteIntent);
+                                    }
                                 }
                             }
                         }
@@ -175,8 +185,9 @@ public class DownloadListFragment extends ListFragment implements LoaderManager.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.itemClearList:
-                Database db = mService.getDatabase();
-                db.clear();
+                Intent clearIntent = new Intent(getActivity(), DtnService.class);
+                clearIntent.setAction(DtnService.DELETE_ALL_INTENT);
+                getActivity().startService(clearIntent);
                 return true;
             
             default:

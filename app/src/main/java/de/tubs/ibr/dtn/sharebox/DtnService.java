@@ -38,6 +38,7 @@ import de.tubs.ibr.dtn.api.TransferMode;
 import de.tubs.ibr.dtn.sharebox.data.Database;
 import de.tubs.ibr.dtn.sharebox.data.Download;
 import de.tubs.ibr.dtn.sharebox.data.Download.State;
+import de.tubs.ibr.dtn.sharebox.data.PackageFile;
 import de.tubs.ibr.dtn.sharebox.data.TruncatedInputStream;
 import de.tubs.ibr.dtn.sharebox.data.Utils;
 
@@ -55,6 +56,15 @@ public class DtnService extends DTNIntentService {
     // download or rejet a bundle
     public static final String ACCEPT_DOWNLOAD_INTENT = "de.tubs.ibr.dtn.sharebox.ACCEPT_DOWNLOAD";
     public static final String REJECT_DOWNLOAD_INTENT = "de.tubs.ibr.dtn.sharebox.REJECT_DOWNLOAD";
+
+    // delete files or downloads
+    public static final String DELETE_ALL_INTENT = "de.tubs.ibr.dtn.sharebox.DELETE_ALL_INTENT";
+
+    public static final String DELETE_FILE_INTENT = "de.tubs.ibr.dtn.sharebox.DELETE_FILE_INTENT";
+    public static final String EXTRA_KEY_FILE_ID = "fileid";
+
+    public static final String DELETE_DOWNLOAD_INTENT = "de.tubs.ibr.dtn.sharebox.DELETE_DOWNLOAD_INTENT";
+    public static final String EXTRA_KEY_DOWNLOAD_ID = "downloadid";
     
     // local endpoint
     public static final String SHAREBOX_APP_ENDPOINT = "sharebox";
@@ -171,6 +181,34 @@ public class DtnService extends DTNIntentService {
             i.setAction(MARK_DELIVERED_INTENT);
             i.putExtra(EXTRA_KEY_BUNDLE_ID, bundleid);
             startService(i);
+        }
+        else if (DELETE_ALL_INTENT.equals(action))
+        {
+            // clear all entries in the database
+            mDatabase.clear();
+        }
+        else if (DELETE_DOWNLOAD_INTENT.equals(action))
+        {
+            Long id = intent.getLongExtra(EXTRA_KEY_DOWNLOAD_ID, 0);
+
+            // retrieve the bundle ID of the intent
+            BundleID bundleid = intent.getParcelableExtra(EXTRA_KEY_BUNDLE_ID);
+
+            // delete the download
+            mDatabase.remove(id);
+
+            // cancel notifications
+            mNotificationFactory.cancelDownload(bundleid);
+        }
+        else if (DELETE_FILE_INTENT.equals(action))
+        {
+            Long id = intent.getLongExtra(EXTRA_KEY_FILE_ID, 0);
+
+            // first get the correspondig file
+            PackageFile pf = mDatabase.getFile(id);
+
+            // remove the file
+            if (pf != null) mDatabase.remove(pf);
         }
         else if (ACCEPT_DOWNLOAD_INTENT.equals(action))
         {

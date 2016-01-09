@@ -169,6 +169,26 @@ public class Database {
         
         return d;
     }
+
+    public PackageFile getFile(Long fileId) {
+        PackageFile ret = null;
+
+        try {
+            Cursor cur = mDatabase.query(Database.TABLE_NAMES[1], PackageFileAdapter.PROJECTION, PackageFile.ID + " = ?", new String[] { fileId.toString() }, null, null, null);
+
+            if (cur.moveToNext())
+            {
+                ret = new PackageFile(mContext, cur, new PackageFileAdapter.ColumnsMap());
+            }
+
+            cur.close();
+        } catch (Exception e) {
+            // error
+            Log.e(TAG, "getFile() failed", e);
+        }
+
+        return ret;
+    }
     
     public List<PackageFile> getFiles(Long downloadId) {
         LinkedList<PackageFile> files = new LinkedList<PackageFile>();

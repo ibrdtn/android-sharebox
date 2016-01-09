@@ -127,7 +127,6 @@ public class NotificationFactory {
     
     public void cancelDownload(BundleID bundleid) {
         mManager.cancel(bundleid.toString(), ONGOING_DOWNLOAD);
-        mDownloadBuilder = null;
     }
     
     /**
