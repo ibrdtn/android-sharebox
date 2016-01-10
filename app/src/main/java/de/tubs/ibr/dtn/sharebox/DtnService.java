@@ -76,6 +76,7 @@ public class DtnService extends DTNIntentService {
     public static final String EXTRA_KEY_BUNDLE_ID = "bundleid";
     public static final String EXTRA_KEY_SOURCE = "source";
     public static final String EXTRA_KEY_LENGTH = "length";
+    public static final String EXTRA_KEY_LIFETIME = "lifetime";
 
     // This is the object that receives interactions from clients.  See
     // RemoteService for a more complete example.
@@ -271,9 +272,13 @@ public class DtnService extends DTNIntentService {
         		
         		ArrayList<Uri> uris = new ArrayList<Uri>();
         		uris.add(uri);
+
+                // get default lifetime from preferences
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                Long lifetimeDefault = Long.valueOf(prefs.getString("upload_lifetime", "3600"));
         		
                 // default lifetime is one hour
-                Long lifetime = intent.getLongExtra("lifetime", 3600L);
+                Long lifetime = intent.getLongExtra(EXTRA_KEY_LIFETIME, lifetimeDefault);
                 
                 // forward to common send method
                 sendFiles(destination, lifetime, uris);
@@ -290,9 +295,13 @@ public class DtnService extends DTNIntentService {
                 // extract destination and files
                 EID destination = (EID)intent.getSerializableExtra(de.tubs.ibr.dtn.Intent.EXTRA_ENDPOINT);
                 ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+
+                // get default lifetime from preferences
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                Long lifetimeDefault = Long.valueOf(prefs.getString("upload_lifetime", "3600"));
                 
                 // default lifetime is one hour
-                Long lifetime = intent.getLongExtra("lifetime", 3600L);
+                Long lifetime = intent.getLongExtra(EXTRA_KEY_LIFETIME, lifetimeDefault);
                 
                 // forward to common send method
                 sendFiles(destination, lifetime, uris);
