@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Einstellungen</string>
+    <string name="alert_missing_daemon">Die DTN Dienste sind nicht installiert. Sie müssen diese installieren und dann diese Anwendung erneut installieren. Möchten Sie die Installation jetzt durchführen?</string>
+    <string name="alert_no">Nein</string>
+    <string name="alert_reinstall_app">Sie müssten die Anwendung erneut installieren um die Berechtigungen zuzuweisen. Möchten Sie dies nun tun?</string>
+    <string name="alert_yes">Ja</string>
+    <string name="button_accept">Annehmen</string>
+    <string name="button_reject">Abweisen</string>
+    <string name="clear_list">Alles löschen</string>
+    <string name="content_neighbor_icon">Nachbarsymbol</string>
+    <string name="empty"></string>
+    <string name="hint_no_handler_for_type">Es ist keine Anwendung für diese Datei installiert.</string>
+    <string name="item_download_title">Übertragung #%1$d (%2$s)</string>
+    <string name="list_no_downloads">Keine Downloads</string>
+    <string name="list_no_files">Keine Dateien</string>
+    <string name="list_no_neighbors">Keine Nachbarn verfügbar.</string>
+    <string name="listitem_multi_title">Einträge auswählen</string>
+    <string name="notification_aborted_download_text">Daten sind beschädigt oder abgelaufen</string>
+    <plurals name="notification_ongoing_upload_text">
+        <item quantity="one">Lade %d Datei</item>
+        <item quantity="other">Lade %d Dateien</item>
+    </plurals>
+    <plurals name="listitem_multi_subtitle">
+        <item quantity="one">%d Eintrag ausgewählt</item>
+        <item quantity="other">%d Einträge ausgewählt</item>
+    </plurals>
+
+    <string name="notification_aborted_download_title">Übertragung fehlgeschlagen</string>
+    <string name="notification_aborted_upload_text">Nicht unterstützte Medien oder fehlende Berechtigung</string>
+    <string name="notification_accept_text">Annehmen</string>
+    <string name="notification_aborted_upload_title">Übertragung fehlgeschlagen</string>
+    <string name="notification_completed_download_text">Download vollständig (%1$s)</string>
+    <string name="notification_completed_upload_text">Upload vollständig (%1$s)</string>
+    <string name="notification_ongoing_download_text">Empfange %1$s</string>
+    <string name="notification_ongoing_download_title">Übretragung #%1$d</string>
+    <string name="notification_ongoing_upload_title">Übertragung</string>
+    <string name="notification_reject_text">Abweisen</string>
+    <string name="pref_header_uploads">Uploads</string>
+    <string name="pref_header_downloads" translatable="false">Downloads</string>
+    <string name="pref_ringtone_silent">Lautlos</string>
+    <string name="pref_title_download_notifications">Zeige Benachrichtigungen</string>
+    <string name="pref_title_download_ringtone">Klingelton</string>
+    <string name="pref_title_download_trusted">Annahme von vertrauenswürdigen Downloads</string>
+    <string name="pref_title_download_vibrate">Vibrieren</string>
+    <string name="pref_title_encrypt_uploads">Uploads verschlüsseln</string>
+    <string name="pref_title_sign_uploads">Uploads signieren</string>
+    <string name="pref_title_upload_lifetime">Gültigkeit der Uploads</string>
+    <string name="pref_title_upload_notifications">Zeige Benachrichtigungen</string>
+    <string name="remove">Entfernen</string>
+    <string name="state_aborted">Abgebrochen</string>
+    <string name="state_accepted">Angenommen</string>
+    <string name="state_completed">Vollständig</string>
+    <string name="state_downloading">Laden</string>
+    <string name="state_pending">Ausstehend</string>
+    <string name="title_activity_download">Archiv</string>
+    <string name="title_activity_pending_dialog">Übertragungsanfrage</string>
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="title_activity_sharewith">ShareBox</string>
+
+    <plurals name="notification_pending_download_title">
+        <item quantity="one">Übertragung #%2$d (%3$s)</item>
+        <item quantity="other">Neue Übertragung</item>
+    </plurals>
+
+    <plurals name="notification_pending_download_text">
+        <item quantity="one">%2$s</item>
+        <item quantity="other">Sie haben %1$d ausstehende Übertragungen</item>
+    </plurals>
+
+    <plurals name="notification_pending_download_ticker">
+        <item quantity="one">Sie haben ausstehende Übertragungen</item>
+        <item quantity="other">Sie haben %1$d ausstehende Übertragungen</item>
+    </plurals>
+    <string name="transmission_summary_text"><![CDATA[<b>Von:</b> %1$s<br /><b>Größe:</b> %2$s]]></string>
+
+    <string-array name="upload_lifetime_names">
+        <item>10 Minuten</item>
+        <item>1 Stunde</item>
+        <item>12 Stunden</item>
+        <item>1 Tag</item>
+        <item>3 Tage</item>
+        <item>7 Tage</item>
+    </string-array>
+    <string name="app_name">ShareBox</string>
+    <string name="item_download_side" translatable="false">%1$s</string>
+    <string name="item_download_text">%1$s</string>
+    <string name="item_file_text" translatable="false">%1$s</string>
+    <string name="item_file_title" translatable="false">%1$d</string>
+    <string name="notification_ongoing_upload_progress_text">%1$d / %2$d: %3$s</string>
+</resources>
