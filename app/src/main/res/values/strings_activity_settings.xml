@@ -25,7 +25,7 @@
         <item>3 days</item>
         <item>7 days</item>
     </string-array>
-    <string-array name="upload_lifetime_values">
+    <string-array name="upload_lifetime_values"  translatable="false">
         <item>600</item>
         <item>3600</item>
         <item>43200</item>
