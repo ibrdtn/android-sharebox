@@ -336,8 +336,14 @@ public class DtnService extends DTNIntentService {
                             break;
                             
                         case 1:
-                            // change upload notification into send completed
-                            mNotificationFactory.showUploadCompleted(uris.size(), bytes);
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DtnService.this);
+                            if (prefs.getBoolean("upload_notifications", true)) {
+                                // change upload notification into send completed
+                                mNotificationFactory.showUploadCompleted(uris.size(), bytes);
+                            } else {
+                                // hide upload notification
+                                mNotificationFactory.cancelUpload();
+                            }
                             
                             // close write side on success
                             try {
