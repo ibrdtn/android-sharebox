@@ -17,7 +17,7 @@
     
     <string name="button_accept">Accept</string>
     <string name="button_reject">Reject</string>
-    <string name="hint_no_handler_for_type">No handler for this type of file.</string>
+    <string name="hint_no_handler_for_type">There is no application for this file installed.</string>
     
     <string name="content_neighbor_icon">Neighbor icon</string>
     <string name="list_no_neighbors">No neighbors available.</string>
