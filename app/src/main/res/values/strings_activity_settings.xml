@@ -4,6 +4,7 @@
 
     <!-- settings for Downloads -->
     <string name="pref_header_downloads">Downloads</string>
+    <string name="pref_title_download_trusted">Auto-accept trusted downloads</string>
     <string name="pref_title_download_notifications">Show notifications</string>
     <string name="pref_title_download_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
