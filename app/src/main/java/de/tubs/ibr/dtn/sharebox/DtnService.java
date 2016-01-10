@@ -455,7 +455,7 @@ public class DtnService extends DTNIntentService {
         Download next = mDatabase.getLatestPending();
         
         if (next != null) {
-            if (prefs.getBoolean("notifications", true)) {
+            if (prefs.getBoolean("download_notifications", true)) {
                 mNotificationFactory.showPendingDownload(next, mDatabase.getPending());
             }
         } else {

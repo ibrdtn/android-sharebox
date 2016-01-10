@@ -1,0 +1,26 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="upload_notifications"
+        android:title="@string/pref_title_upload_notifications" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="upload_sign"
+        android:title="@string/pref_title_sign_uploads" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="upload_encrypt"
+        android:title="@string/pref_title_encrypt_uploads" />
+
+    <ListPreference
+        android:defaultValue="3600"
+        android:entries="@array/upload_lifetime_names"
+        android:entryValues="@array/upload_lifetime_values"
+        android:key="upload_lifetime"
+        android:title="@string/pref_title_upload_lifetime" >
+    </ListPreference>
+
+</PreferenceScreen>
