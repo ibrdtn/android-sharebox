@@ -12,8 +12,10 @@ import java.util.List;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Binder;
@@ -22,6 +24,10 @@ import android.os.ParcelFileDescriptor;
 import android.os.ParcelFileDescriptor.AutoCloseOutputStream;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import de.tubs.ibr.dtn.SecurityService;
+import de.tubs.ibr.dtn.SecurityUtils;
+import de.tubs.ibr.dtn.Services;
 import de.tubs.ibr.dtn.api.Block;
 import de.tubs.ibr.dtn.api.Bundle;
 import de.tubs.ibr.dtn.api.BundleID;
@@ -77,6 +83,7 @@ public class DtnService extends DTNIntentService {
     public static final String EXTRA_KEY_SOURCE = "source";
     public static final String EXTRA_KEY_LENGTH = "length";
     public static final String EXTRA_KEY_LIFETIME = "lifetime";
+    public static final String EXTRA_KEY_AUTO_ACCEPT = "auto-accept";
 
     // This is the object that receives interactions from clients.  See
     // RemoteService for a more complete example.
@@ -84,6 +91,10 @@ public class DtnService extends DTNIntentService {
     
     // The communication with the DTN service is done using the DTNClient
     private DTNClient.Session mSession = null;
+
+    // Security API provided by IBR-DTN
+    private SecurityService mSecurityService = null;
+    private boolean mSecurityBound = false;
     
     // should be set to true if a download is requested 
     private Boolean mIsDownloading = false;
@@ -95,6 +106,16 @@ public class DtnService extends DTNIntentService {
     
     // the database
     private Database mDatabase = null;
+
+    private ServiceConnection mSecurityConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mSecurityService = SecurityService.Stub.asInterface(service);
+        }
+
+        public void onServiceDisconnected(ComponentName name) {
+            mSecurityService = null;
+        }
+    };
     
     public DtnService() {
         super(TAG);
@@ -127,6 +148,33 @@ public class DtnService extends DTNIntentService {
     public PendingIntent getSelectNeighborIntent() {
         // get pending intent for neighbor list
         return getClient().getSelectNeighborIntent();
+    }
+
+    public boolean isTrusted(Bundle b) {
+        // can not check trust relation without the security service
+        if (mSecurityService == null) {
+            Log.d(TAG, "Security service not available");
+            return false;
+        }
+
+        if (b.get(Bundle.ProcFlags.DTNSEC_STATUS_VERIFIED)) {
+            // check if this peer is trusted
+            android.os.Bundle keyinfo = SecurityUtils.getSecurityInfo(mSecurityService, b.getSource().toString());
+            if (keyinfo == null) return false;
+            if (!keyinfo.containsKey(SecurityUtils.EXTRA_TRUST_LEVEL)) return false;
+
+            // retrieve trust level
+            Integer trust_level = keyinfo.getInt(SecurityUtils.EXTRA_TRUST_LEVEL);
+
+            Log.d(TAG, "Trust level is " + trust_level.toString());
+
+            // we trust the peer if the level is above 67 (green)
+            return (trust_level > 67);
+        } else {
+            Log.d(TAG, "Received bundle is not signed");
+        }
+
+        return false;
     }
     
     @Override
@@ -245,7 +293,7 @@ public class DtnService extends DTNIntentService {
             try {
                 mIsDownloading = true;
                 if (mSession.query(bundleid)) {
-                    mNotificationFactory.showDownloadCompleted(d);
+                    mNotificationFactory.showDownloadCompleted(d, !intent.getBooleanExtra(EXTRA_KEY_AUTO_ACCEPT, false));
                 } else {
                     // set state to aborted
                     mDatabase.setState(d.getId(), Download.State.ABORTED);
@@ -431,10 +479,23 @@ public class DtnService extends DTNIntentService {
         session.setDataHandler(mDataHandler);
         
         mSession = session;
+
+        // Establish a connection with the security service
+        try {
+            Services.SERVICE_SECURITY.bind(this, mSecurityConnection, Context.BIND_AUTO_CREATE);
+            mSecurityBound = true;
+        } catch (ServiceNotAvailableException e) {
+            // Security API not available
+        }
     }
 
     @Override
     public void onSessionDisconnected() {
+        if (mSecurityBound) {
+            unbindService(mSecurityConnection);
+            mSecurityBound = false;
+        }
+
         Log.d(TAG, "Session disconnected");
         
         mSession = null;
@@ -553,10 +614,26 @@ public class DtnService extends DTNIntentService {
                 download_request.setState(State.PENDING);
                 
                 // put download object into the database
-                mDatabase.put(download_request);
-                
-                // update pending download notification
-                updatePendingDownloadNotification();
+                Long download_id = mDatabase.put(download_request);
+
+                // get preferences
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DtnService.this);
+
+                // automatically accept the download if the peer is
+                // trusted and this option is enabled
+                if (prefs.getBoolean("download_accept_trusted", false) && isTrusted(mBundle)) {
+                    // automatically start the download
+                    Intent acceptIntent = new Intent(DtnService.this, DtnService.class);
+                    acceptIntent.setAction(DtnService.ACCEPT_DOWNLOAD_INTENT);
+                    acceptIntent.putExtra(EXTRA_KEY_AUTO_ACCEPT, true);
+                    acceptIntent.putExtra(DtnService.EXTRA_KEY_BUNDLE_ID, mBundleId);
+                    Uri downloadUri = Uri.fromParts("download", download_id.toString(), "");
+                    acceptIntent.setData(downloadUri);
+                    startService(acceptIntent);
+                } else {
+                    // update pending download notification
+                    updatePendingDownloadNotification();
+                }
             }
             
             // free the bundle header
