@@ -129,7 +129,7 @@ public class DtnService extends DTNIntentService {
     }
     
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected synchronized void onHandleIntent(Intent intent) {
         String action = intent.getAction();
         
         if (de.tubs.ibr.dtn.Intent.RECEIVE.equals(action))
