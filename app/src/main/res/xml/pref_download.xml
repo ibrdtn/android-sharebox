@@ -6,24 +6,24 @@
     -->
     <CheckBoxPreference
         android:defaultValue="true"
-        android:key="notifications"
-        android:title="@string/pref_title_notifications" />
+        android:key="download_notifications"
+        android:title="@string/pref_title_download_notifications" />
 
     <!-- Allows the user to choose a ringtone in the 'notification' category. -->
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
     <!-- NOTE: RingtonePreference's summary should be set to its value by the activity code. -->
     <RingtonePreference
         android:defaultValue="content://settings/system/notification_sound"
-        android:dependency="notifications"
-        android:key="notifications_pending_download_ringtone"
+        android:dependency="download_notifications"
+        android:key="download_notifications_ringtone"
         android:ringtoneType="notification"
-        android:title="@string/pref_title_ringtone" />
+        android:title="@string/pref_title_download_ringtone" />
 
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
     <CheckBoxPreference
         android:defaultValue="true"
-        android:dependency="notifications"
-        android:key="notifications_pending_download_vibrate"
-        android:title="@string/pref_title_vibrate" />
+        android:dependency="download_notifications"
+        android:key="download_notifications_vibrate"
+        android:title="@string/pref_title_download_vibrate" />
 
 </PreferenceScreen>

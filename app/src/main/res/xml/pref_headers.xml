@@ -3,7 +3,11 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="de.tubs.ibr.dtn.sharebox.ui.SettingsActivity$NotificationPreferenceFragment"
-        android:title="@string/pref_header_notifications" />
+        android:fragment="de.tubs.ibr.dtn.sharebox.ui.SettingsActivity$UploadPreferenceFragment"
+        android:title="@string/pref_header_uploads" />
+
+    <header
+        android:fragment="de.tubs.ibr.dtn.sharebox.ui.SettingsActivity$DownloadPreferenceFragment"
+        android:title="@string/pref_header_downloads" />
 
 </preference-headers>

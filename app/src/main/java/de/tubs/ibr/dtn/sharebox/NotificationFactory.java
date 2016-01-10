@@ -307,14 +307,14 @@ public class NotificationFactory {
         
         int defaults = 0;
         
-        if (prefs.getBoolean("notifications", true)) {
-            if (prefs.getBoolean("notifications_pending_download_vibrate", true)) {
+        if (prefs.getBoolean("download_notifications", true)) {
+            if (prefs.getBoolean("download_notifications_vibrate", true)) {
                 defaults |= Notification.DEFAULT_VIBRATE;
             }
             
             builder.setDefaults(defaults);
             builder.setLights(0xff0080ff, 300, 1000);
-            builder.setSound( Uri.parse( prefs.getString("notifications_pending_download_ringtone", "content://settings/system/notification_sound") ) );
+            builder.setSound( Uri.parse( prefs.getString("download_notifications_ringtone", "content://settings/system/notification_sound") ) );
         }
     }
 }

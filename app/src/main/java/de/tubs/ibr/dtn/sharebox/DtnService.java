@@ -76,6 +76,7 @@ public class DtnService extends DTNIntentService {
     public static final String EXTRA_KEY_BUNDLE_ID = "bundleid";
     public static final String EXTRA_KEY_SOURCE = "source";
     public static final String EXTRA_KEY_LENGTH = "length";
+    public static final String EXTRA_KEY_LIFETIME = "lifetime";
 
     // This is the object that receives interactions from clients.  See
     // RemoteService for a more complete example.
@@ -271,12 +272,24 @@ public class DtnService extends DTNIntentService {
         		
         		ArrayList<Uri> uris = new ArrayList<Uri>();
         		uris.add(uri);
-        		
-                // default lifetime is one hour
-                Long lifetime = intent.getLongExtra("lifetime", 3600L);
+
+                // get default lifetime from preferences
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                Long lifetimeDefault = Long.valueOf(prefs.getString("upload_lifetime", "3600"));
+
+                // create bundle object
+                Bundle b = new Bundle();
+                b.setDestination(destination);
+                b.setLifetime(intent.getLongExtra(EXTRA_KEY_LIFETIME, lifetimeDefault));
+
+                // enable signature if requested
+                b.set(Bundle.ProcFlags.DTNSEC_REQUEST_SIGN, prefs.getBoolean("upload_sign", true));
+
+                // enable encryption if requested
+                b.set(Bundle.ProcFlags.DTNSEC_REQUEST_ENCRYPT, prefs.getBoolean("upload_encrypt", false));
                 
                 // forward to common send method
-                sendFiles(destination, lifetime, uris);
+                sendFiles(b, uris);
         	}
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
             // send one or more files as bundle
@@ -290,19 +303,31 @@ public class DtnService extends DTNIntentService {
                 // extract destination and files
                 EID destination = (EID)intent.getSerializableExtra(de.tubs.ibr.dtn.Intent.EXTRA_ENDPOINT);
                 ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-                
-                // default lifetime is one hour
-                Long lifetime = intent.getLongExtra("lifetime", 3600L);
-                
+
+                // get default lifetime from preferences
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                Long lifetimeDefault = Long.valueOf(prefs.getString("upload_lifetime", "3600"));
+
+                // create bundle object
+                Bundle b = new Bundle();
+                b.setDestination(destination);
+                b.setLifetime(intent.getLongExtra(EXTRA_KEY_LIFETIME, lifetimeDefault));
+
+                // enable signature if requested
+                b.set(Bundle.ProcFlags.DTNSEC_REQUEST_SIGN, prefs.getBoolean("upload_sign", true));
+
+                // enable encryption if requested
+                b.set(Bundle.ProcFlags.DTNSEC_REQUEST_ENCRYPT, prefs.getBoolean("upload_encrypt", false));
+
                 // forward to common send method
-                sendFiles(destination, lifetime, uris);
+                sendFiles(b, uris);
             }
         }
     }
     
-    private void sendFiles(final EID destination, long lifetime, final ArrayList<Uri> uris) {
+    private void sendFiles(final Bundle bundle, final ArrayList<Uri> uris) {
         // show upload notification
-        mNotificationFactory.showUpload(destination, uris.size());
+        mNotificationFactory.showUpload(bundle.getDestination(), uris.size());
         
         try {
             // create a pipe
@@ -332,12 +357,18 @@ public class DtnService extends DTNIntentService {
                             }
                             
                             // change send notification into send failed
-                            mNotificationFactory.showUploadAborted(destination);
+                            mNotificationFactory.showUploadAborted(bundle.getDestination());
                             break;
                             
                         case 1:
-                            // change upload notification into send completed
-                            mNotificationFactory.showUploadCompleted(uris.size(), bytes);
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(DtnService.this);
+                            if (prefs.getBoolean("upload_notifications", true)) {
+                                // change upload notification into send completed
+                                mNotificationFactory.showUploadCompleted(uris.size(), bytes);
+                            } else {
+                                // hide upload notification
+                                mNotificationFactory.cancelUpload();
+                            }
                             
                             // close write side on success
                             try {
@@ -376,7 +407,7 @@ public class DtnService extends DTNIntentService {
             
             try {
                 // send the data
-                mSession.send(destination, lifetime, pipe[0]);
+                mSession.send(bundle, pipe[0]);
             } catch (Exception e) {
                 pipe[0].close();
                 targetStream.close();
@@ -455,7 +486,7 @@ public class DtnService extends DTNIntentService {
         Download next = mDatabase.getLatestPending();
         
         if (next != null) {
-            if (prefs.getBoolean("notifications", true)) {
+            if (prefs.getBoolean("download_notifications", true)) {
                 mNotificationFactory.showPendingDownload(next, mDatabase.getPending());
             }
         } else {

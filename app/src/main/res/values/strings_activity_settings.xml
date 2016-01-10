@@ -2,11 +2,35 @@
 
     <string name="title_activity_settings">Settings</string>
 
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-    <string name="pref_title_notifications">Show notifications</string>
-    <string name="pref_title_ringtone">Ringtone</string>
+    <!-- settings for Downloads -->
+    <string name="pref_header_downloads">Downloads</string>
+    <string name="pref_title_download_notifications">Show notifications</string>
+    <string name="pref_title_download_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
-    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="pref_title_download_vibrate">Vibrate</string>
+
+    <!-- settings for Uploads -->
+    <string name="pref_header_uploads">Uploads</string>
+    <string name="pref_title_upload_notifications">Show notifications</string>
+    <string name="pref_title_encrypt_uploads">Encrypt uploads</string>
+    <string name="pref_title_sign_uploads">Sign uploads</string>
+    <string name="pref_title_upload_lifetime">Upload validity</string>
+
+    <string-array name="upload_lifetime_names">
+        <item>10 minutes</item>
+        <item>1 hour</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+        <item>3 days</item>
+        <item>7 days</item>
+    </string-array>
+    <string-array name="upload_lifetime_values">
+        <item>600</item>
+        <item>3600</item>
+        <item>43200</item>
+        <item>86400</item>
+        <item>259200</item>
+        <item>604800</item>
+    </string-array>
 
 </resources>
