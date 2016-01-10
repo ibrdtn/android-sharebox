@@ -9,7 +9,6 @@
     <string name="button_reject">Abweisen</string>
     <string name="clear_list">Alles löschen</string>
     <string name="content_neighbor_icon">Nachbarsymbol</string>
-    <string name="empty"></string>
     <string name="hint_no_handler_for_type">Es ist keine Anwendung für diese Datei installiert.</string>
     <string name="item_download_title">Übertragung #%1$d (%2$s)</string>
     <string name="list_no_downloads">Keine Downloads</string>
@@ -37,7 +36,7 @@
     <string name="notification_ongoing_upload_title">Übertragung</string>
     <string name="notification_reject_text">Abweisen</string>
     <string name="pref_header_uploads">Uploads</string>
-    <string name="pref_header_downloads" translatable="false">Downloads</string>
+    <string name="pref_header_downloads">Downloads</string>
     <string name="pref_ringtone_silent">Lautlos</string>
     <string name="pref_title_download_notifications">Zeige Benachrichtigungen</string>
     <string name="pref_title_download_ringtone">Klingelton</string>
@@ -82,10 +81,9 @@
         <item>3 Tage</item>
         <item>7 Tage</item>
     </string-array>
-    <string name="app_name">ShareBox</string>
-    <string name="item_download_side" translatable="false">%1$s</string>
+    <string name="item_download_side">%1$s</string>
     <string name="item_download_text">%1$s</string>
-    <string name="item_file_text" translatable="false">%1$s</string>
-    <string name="item_file_title" translatable="false">%1$d</string>
+    <string name="item_file_text">%1$s</string>
+    <string name="item_file_title">%1$d</string>
     <string name="notification_ongoing_upload_progress_text">%1$d / %2$d: %3$s</string>
 </resources>

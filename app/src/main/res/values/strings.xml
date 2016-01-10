@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ShareBox</string>
+    <string name="app_name" translatable="false">ShareBox</string>
     <string name="action_settings">Settings</string>
-    <string name="empty"></string>
+    <string name="empty" translatable="false"></string>
     <string name="remove">Remove</string>
     <string name="clear_list">Clear all</string>
     <string name="state_pending">Pending</string>
