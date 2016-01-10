@@ -276,12 +276,20 @@ public class DtnService extends DTNIntentService {
                 // get default lifetime from preferences
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 Long lifetimeDefault = Long.valueOf(prefs.getString("upload_lifetime", "3600"));
-        		
-                // default lifetime is one hour
-                Long lifetime = intent.getLongExtra(EXTRA_KEY_LIFETIME, lifetimeDefault);
+
+                // create bundle object
+                Bundle b = new Bundle();
+                b.setDestination(destination);
+                b.setLifetime(intent.getLongExtra(EXTRA_KEY_LIFETIME, lifetimeDefault));
+
+                // enable signature if requested
+                b.set(Bundle.ProcFlags.DTNSEC_REQUEST_SIGN, prefs.getBoolean("upload_sign", true));
+
+                // enable encryption if requested
+                b.set(Bundle.ProcFlags.DTNSEC_REQUEST_ENCRYPT, prefs.getBoolean("upload_encrypt", false));
                 
                 // forward to common send method
-                sendFiles(destination, lifetime, uris);
+                sendFiles(b, uris);
         	}
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
             // send one or more files as bundle
@@ -299,19 +307,27 @@ public class DtnService extends DTNIntentService {
                 // get default lifetime from preferences
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 Long lifetimeDefault = Long.valueOf(prefs.getString("upload_lifetime", "3600"));
-                
-                // default lifetime is one hour
-                Long lifetime = intent.getLongExtra(EXTRA_KEY_LIFETIME, lifetimeDefault);
-                
+
+                // create bundle object
+                Bundle b = new Bundle();
+                b.setDestination(destination);
+                b.setLifetime(intent.getLongExtra(EXTRA_KEY_LIFETIME, lifetimeDefault));
+
+                // enable signature if requested
+                b.set(Bundle.ProcFlags.DTNSEC_REQUEST_SIGN, prefs.getBoolean("upload_sign", true));
+
+                // enable encryption if requested
+                b.set(Bundle.ProcFlags.DTNSEC_REQUEST_ENCRYPT, prefs.getBoolean("upload_encrypt", false));
+
                 // forward to common send method
-                sendFiles(destination, lifetime, uris);
+                sendFiles(b, uris);
             }
         }
     }
     
-    private void sendFiles(final EID destination, long lifetime, final ArrayList<Uri> uris) {
+    private void sendFiles(final Bundle bundle, final ArrayList<Uri> uris) {
         // show upload notification
-        mNotificationFactory.showUpload(destination, uris.size());
+        mNotificationFactory.showUpload(bundle.getDestination(), uris.size());
         
         try {
             // create a pipe
@@ -341,7 +357,7 @@ public class DtnService extends DTNIntentService {
                             }
                             
                             // change send notification into send failed
-                            mNotificationFactory.showUploadAborted(destination);
+                            mNotificationFactory.showUploadAborted(bundle.getDestination());
                             break;
                             
                         case 1:
@@ -391,7 +407,7 @@ public class DtnService extends DTNIntentService {
             
             try {
                 // send the data
-                mSession.send(destination, lifetime, pipe[0]);
+                mSession.send(bundle, pipe[0]);
             } catch (Exception e) {
                 pipe[0].close();
                 targetStream.close();
