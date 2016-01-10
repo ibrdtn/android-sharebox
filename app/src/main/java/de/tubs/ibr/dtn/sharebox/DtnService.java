@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -184,8 +185,21 @@ public class DtnService extends DTNIntentService {
         }
         else if (DELETE_ALL_INTENT.equals(action))
         {
-            // clear all entries in the database
-            mDatabase.clear();
+            // get all downloads from the database
+            List<Download> downloads = mDatabase.getDownloads();
+
+            // create a delete intent for each of it
+            for (Download d : downloads) {
+                // skip pending downloads
+                if (d.isPending()) continue;
+
+                // queue delete intent
+                Intent deleteIntent = new Intent(DtnService.this, DtnService.class);
+                deleteIntent.setAction(DtnService.DELETE_DOWNLOAD_INTENT);
+                deleteIntent.putExtra(DtnService.EXTRA_KEY_DOWNLOAD_ID, d.getId());
+                deleteIntent.putExtra(DtnService.EXTRA_KEY_BUNDLE_ID, d.getBundleId());
+                startService(deleteIntent);
+            }
         }
         else if (DELETE_DOWNLOAD_INTENT.equals(action))
         {
@@ -204,7 +218,7 @@ public class DtnService extends DTNIntentService {
         {
             Long id = intent.getLongExtra(EXTRA_KEY_FILE_ID, 0);
 
-            // first get the correspondig file
+            // first get the corresponding file
             PackageFile pf = mDatabase.getFile(id);
 
             // remove the file
@@ -218,7 +232,7 @@ public class DtnService extends DTNIntentService {
             Log.d(TAG, "Download request for " + bundleid.toString());
             
             // mark the download as accepted
-            Download d = mDatabase.get(bundleid);
+            Download d = mDatabase.getDownload(bundleid);
             mDatabase.setState(d.getId(), Download.State.ACCEPTED);
             
             // update pending download notification
@@ -483,7 +497,7 @@ public class DtnService extends DTNIntentService {
                 startService(i);
 
                 // set state to completed
-                Download d = mDatabase.get(mBundleId);
+                Download d = mDatabase.getDownload(mBundleId);
                 mDatabase.setState(d.getId(), Download.State.COMPLETED);
             } else {
                 // create new download object

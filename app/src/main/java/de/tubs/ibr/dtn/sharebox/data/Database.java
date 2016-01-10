@@ -113,7 +113,7 @@ public class Database {
                     Database.TABLE_NAMES[0], 
                     DownloadAdapter.PROJECTION, 
                     Download.STATE + " = ?", 
-                    new String[] { String.valueOf( Download.State.PENDING.getValue() ) },
+                    new String[] { String.valueOf(Download.State.PENDING.getValue()) },
                     null, null, Download.TIMESTAMP + " DESC", "0, 1");
             
             if (cur.moveToNext())
@@ -130,7 +130,7 @@ public class Database {
         return ret;
     }
     
-    public Download get(BundleID id) {
+    public Download getDownload(BundleID id) {
         Download d = null;
         
         try {
@@ -150,7 +150,7 @@ public class Database {
         return d;
     }
     
-    public Download get(Long downloadId) {
+    public Download getDownload(Long downloadId) {
         Download d = null;
         
         try {
@@ -168,6 +168,26 @@ public class Database {
         }
         
         return d;
+    }
+
+    public List<Download> getDownloads() {
+        LinkedList<Download> downloads = new LinkedList<Download>();
+
+        try {
+            Cursor cur = mDatabase.query(Database.TABLE_NAMES[0], DownloadAdapter.PROJECTION, null, null, null, null, null);
+
+            while (cur.moveToNext())
+            {
+                downloads.add(new Download(mContext, cur, new DownloadAdapter.ColumnsMap()));
+            }
+
+            cur.close();
+        } catch (Exception e) {
+            // error
+            Log.e(TAG, "getDownloads() failed", e);
+        }
+
+        return downloads;
     }
 
     public PackageFile getFile(Long fileId) {
@@ -236,7 +256,7 @@ public class Database {
     public Long put(BundleID bundle_id, File f) {
         ContentValues values = new ContentValues();
         
-        Download d = get(bundle_id);
+        Download d = getDownload(bundle_id);
         
         if (d == null) return null;
 
@@ -284,36 +304,10 @@ public class Database {
         ContentValues values = new ContentValues();
 
         values.put(Download.STATE, state.getValue());
-        
-        // update message data
-        mDatabase.update(Database.TABLE_NAMES[0], values, "_id = ?", new String[] { String.valueOf(id) });
-        
-        notifyDataChanged();
-    }
-    
-    public void clear() {
-        // delete all files
-        try {
-            Cursor cur = mDatabase.query(Database.TABLE_NAMES[1], PackageFileAdapter.PROJECTION, null, null, null, null, null);
-            
-            while (cur.moveToNext())
-            {
-                File f = new File(cur.getString(new PackageFileAdapter.ColumnsMap().mColumnFilename));
-                
-                // delete the file
-                f.delete();
 
-                // removed file from media library
-                removeFromMediaStore(f);
-            }
-            
-            cur.close();
-        } catch (Exception e) {
-            Log.e(TAG, "clear() failed", e);
-        }
-        
-        mDatabase.delete(Database.TABLE_NAMES[0], null, null);
-        mDatabase.delete(Database.TABLE_NAMES[1], null, null);
+        // update message data
+        mDatabase.update(Database.TABLE_NAMES[0], values, "_id = ?", new String[]{String.valueOf(id)});
+
         notifyDataChanged();
     }
     
@@ -333,7 +327,7 @@ public class Database {
     }
     
     public void remove(BundleID id) {
-        Download d = get(id);
+        Download d = getDownload(id);
         if (d == null) return;
         remove(d.getId());
     }
