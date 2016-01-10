@@ -83,6 +83,7 @@ public class DtnService extends DTNIntentService {
     public static final String EXTRA_KEY_SOURCE = "source";
     public static final String EXTRA_KEY_LENGTH = "length";
     public static final String EXTRA_KEY_LIFETIME = "lifetime";
+    public static final String EXTRA_KEY_AUTO_ACCEPT = "auto-accept";
 
     // This is the object that receives interactions from clients.  See
     // RemoteService for a more complete example.
@@ -292,7 +293,7 @@ public class DtnService extends DTNIntentService {
             try {
                 mIsDownloading = true;
                 if (mSession.query(bundleid)) {
-                    mNotificationFactory.showDownloadCompleted(d);
+                    mNotificationFactory.showDownloadCompleted(d, !intent.getBooleanExtra(EXTRA_KEY_AUTO_ACCEPT, false));
                 } else {
                     // set state to aborted
                     mDatabase.setState(d.getId(), Download.State.ABORTED);
@@ -624,6 +625,7 @@ public class DtnService extends DTNIntentService {
                     // automatically start the download
                     Intent acceptIntent = new Intent(DtnService.this, DtnService.class);
                     acceptIntent.setAction(DtnService.ACCEPT_DOWNLOAD_INTENT);
+                    acceptIntent.putExtra(EXTRA_KEY_AUTO_ACCEPT, true);
                     acceptIntent.putExtra(DtnService.EXTRA_KEY_BUNDLE_ID, mBundleId);
                     Uri downloadUri = Uri.fromParts("download", download_id.toString(), "");
                     acceptIntent.setData(downloadUri);

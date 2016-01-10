@@ -83,7 +83,7 @@ public class NotificationFactory {
         mManager.notify(d.getBundleId().toString(), ONGOING_DOWNLOAD, mDownloadBuilder.build());
     }
     
-    public void showDownloadCompleted(Download d) {
+    public void showDownloadCompleted(Download d, boolean silent) {
         String bytesText = Utils.humanReadableByteCount(d.getLength(), true);
         
         Uri downloadUri = Uri.fromParts("download", d.getId().toString(), "");
@@ -93,6 +93,7 @@ public class NotificationFactory {
         mDownloadBuilder.setProgress(0, 0, false);
         mDownloadBuilder.setOngoing(false);
         mDownloadBuilder.setAutoCancel(true);
+        if (!silent) setNotificationSettings(mDownloadBuilder);
         
         // add direct intent to download
         Intent summaryIntent = new Intent(mContext, PackageFileActivity.class);
