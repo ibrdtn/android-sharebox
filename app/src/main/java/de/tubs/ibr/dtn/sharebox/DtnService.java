@@ -283,6 +283,9 @@ public class DtnService extends DTNIntentService {
             // mark the download as accepted
             Download d = mDatabase.getDownload(bundleid);
             mDatabase.setState(d.getId(), Download.State.ACCEPTED);
+
+            // get preferences
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             
             // update pending download notification
             updatePendingDownloadNotification();
@@ -293,7 +296,11 @@ public class DtnService extends DTNIntentService {
             try {
                 mIsDownloading = true;
                 if (mSession.query(bundleid)) {
-                    mNotificationFactory.showDownloadCompleted(d, !intent.getBooleanExtra(EXTRA_KEY_AUTO_ACCEPT, false));
+                    if (prefs.getBoolean("download_notifications", true)) {
+                        mNotificationFactory.showDownloadCompleted(d, !intent.getBooleanExtra(EXTRA_KEY_AUTO_ACCEPT, false));
+                    } else {
+                        mNotificationFactory.cancelDownload(d);
+                    }
                 } else {
                     // set state to aborted
                     mDatabase.setState(d.getId(), Download.State.ABORTED);

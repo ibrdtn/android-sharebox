@@ -125,6 +125,10 @@ public class NotificationFactory {
         // display the progress
         mManager.notify(d.getBundleId().toString(), ONGOING_DOWNLOAD, mDownloadBuilder.build());
     }
+
+    public void cancelDownload(Download d) {
+        mManager.cancel(d.getBundleId().toString(), ONGOING_DOWNLOAD);
+    }
     
     public void cancelDownload(BundleID bundleid) {
         mManager.cancel(bundleid.toString(), ONGOING_DOWNLOAD);
